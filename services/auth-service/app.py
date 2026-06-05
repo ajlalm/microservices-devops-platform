@@ -1,9 +1,15 @@
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
 SERVICE_NAME = "auth-service"
 
+
+REQUEST_COUNT = Counter(
+    "auth_service_requests_total",
+    "Total requests to auth-service"
+)
 
 @app.route("/health", methods=["GET"])
 def health():
@@ -36,6 +42,11 @@ def login():
         "error": "Invalid username or password"
     }), 401
 
+
+@app.route("/metrics", methods=["GET"])
+def metrics():
+    REQUEST_COUNT.inc()
+    return generate_latest(), 200, {"Content-Type": CONTENT_TYPE_LATEST}
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)

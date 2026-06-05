@@ -1,8 +1,17 @@
+
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
 SERVICE_NAME = "task-service"
+
+REQUEST_COUNT = Counter(
+    "task_service_requests_total",
+    "Total requests to task-service"
+)
+
+
 
 tasks = [
     {"id": 1, "title": "Learn Docker", "completed": False},
@@ -48,6 +57,10 @@ def create_task():
         "task": new_task
     }), 201
 
+@app.route("/metrics", methods=["GET"])
+def metrics():
+    REQUEST_COUNT.inc()
+    return generate_latest(), 200, {"Content-Type": CONTENT_TYPE_LATEST}
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002)
