@@ -375,7 +375,5 @@ kubectl get svc
 
 **Ajlal Mubarik**
 
-Master's Student in Computer Science
-University of Passau
 
 GitHub: https://github.com/ajlalm
